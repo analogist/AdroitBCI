@@ -17,9 +17,12 @@ while(~terminate)
     [terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bcistream_reader]...
         = bci_connectloop(port, timeout);
     
+    iter = uint32(1);
     while(goodconnection)
         [goodconnection, bciJSON] = bci_read(bcistream_reader, bcistream, read_timeout);
-        disp(bciJSON); %TEST
+%         bciJSON = bci_parse(bciJSON);
+        disp(bciJSON);
+        iter = iter+1;
     end
     
     bci_cleanup(serverbcisocket, bcisocket);

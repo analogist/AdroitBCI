@@ -1,9 +1,8 @@
+function [ch1, ch2, stim, tstamp] = bci_parse(bciJSON)
 %% Read and parse the TCP buffered content
 % Given good stream, with attached DataReader.class, read all the
 % data in the buffer.
 % Needs to be scalable to multiple channels. Right now 1 channel.
-
-function [ch1, ch2, stim, tstamp] = bci_parse()
 
     % Channel 1 parse
     ch1prestring = '"Channels":{"0":['; % search for this string
