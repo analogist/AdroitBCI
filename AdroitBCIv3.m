@@ -16,18 +16,11 @@ rootpath = pwd();
 %% Big Loop
 terminate = false;
 while(~terminate)
-    i = uint32(1);
     [terminate, serverbcisocket, bcisocket, bcistream] = bci_connectloop(port, timeout);
     
-    
+    if(~terminate) % good connection
+        
+    end
 end
 
-fprintf('Closing down remaining sockets.\n')
-if(isa(serverbcisocket, 'java.net.ServerSocket'))
-    serverbcisocket.close;
-end
-if(isa(bcisocket, 'java.net.Socket'))
-    bcisocket.close;
-end
-
-mjcClose(so);
+bci_cleanup(terminate, serverbcisocket, bcisocket, so);
