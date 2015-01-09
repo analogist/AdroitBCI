@@ -16,7 +16,8 @@ rootpath = pwd();
 %% Big Loop
 terminate = false;
 while(~terminate)
-    [terminate, serverbcisocket, bcisocket, bcistream] = bci_connectloop(port, timeout);
+    [terminate, serverbcisocket, bcisocket, bcistream, bcistream_reader]...
+        = bci_connectloop(port, timeout);
     
     if(~terminate) % good connection
         

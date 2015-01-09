@@ -1,4 +1,4 @@
-function [ terminate, serverbcisocket, bcisocket, bcistream ] = bci_connectloop( port, timeout )
+function [ terminate, serverbcisocket, bcisocket, bcistream, bcistream_reader ] = bci_connectloop( port, timeout )
 %BCI_CONNECTLOOP Wraps around bci_connection to keep making connections
 %   Uses timeout times and makes bci_connection is repeatedly attempted
 
@@ -14,8 +14,11 @@ function [ terminate, serverbcisocket, bcisocket, bcistream ] = bci_connectloop(
     if(goodconnection)
         fprintf(1, '   Good connection to BCI2000!\n');
         terminate = false;
+        d_bcistream = DataInputStream(bcistream);
+        bcistream_reader = DataReader(d_bcistream);
     elseif(tryconnect.Stop()) % only breaks big loop if due to manual click
         terminate = true;
+        bcistream_reader = [];
     end
     
     tryconnect.Clear();
