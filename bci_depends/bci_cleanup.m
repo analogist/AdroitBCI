@@ -1,4 +1,4 @@
-function [] = bci_cleanup( terminate, serverbcisocket, bcisocket, so )
+function [] = bci_cleanup( serverbcisocket, bcisocket)
 %BCI_CLEANUP Clean up all the sockets
 
     fprintf('Closing down remaining sockets.\n')
@@ -7,10 +7,6 @@ function [] = bci_cleanup( terminate, serverbcisocket, bcisocket, so )
     end
     if(isa(bcisocket, 'java.net.Socket'))
         bcisocket.close;
-    end
-
-    if(terminate)
-        mjcClose(so);
     end
 end
 

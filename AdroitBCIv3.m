@@ -5,8 +5,6 @@
 %% Init
 % variables
 clear all
-import java.net.ServerSocket
-import java.io.*
 rootpath = pwd();
 [adroitpath, port, timeout, read_timeout, synergydims, originpos, protosynergies]...
     = setup_bci(rootpath);
@@ -16,12 +14,15 @@ rootpath = pwd();
 %% Big Loop
 terminate = false;
 while(~terminate)
-    [terminate, serverbcisocket, bcisocket, bcistream, bcistream_reader]...
+    [terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bcistream_reader]...
         = bci_connectloop(port, timeout);
     
-    if(~terminate) % good connection
-        
+    while(goodconnection)
+        [goodconnection, bciJSON] = bci_read(bcistream_reader, bcistream, read_timeout);
+        disp(bciJSON); %TEST
     end
+    
+    bci_cleanup(serverbcisocket, bcisocket);
 end
-
-bci_cleanup(terminate, serverbcisocket, bcisocket, so);
+bci_cleanup(serverbcisocket, bcisocket);
+mjcClose(so);

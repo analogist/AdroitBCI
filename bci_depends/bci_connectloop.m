@@ -1,7 +1,9 @@
-function [ terminate, serverbcisocket, bcisocket, bcistream, bcistream_reader ] = bci_connectloop( port, timeout )
+function [ terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bcistream_reader ] = bci_connectloop( port, timeout )
 %BCI_CONNECTLOOP Wraps around bci_connection to keep making connections
 %   Uses timeout times and makes bci_connection is repeatedly attempted
-
+    import java.net.ServerSocket
+    import java.io.*
+    
     goodconnection = false;
     
     tryconnect = stoploop('Press ok to abort attempting connections');

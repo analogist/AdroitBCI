@@ -12,10 +12,6 @@
 
 function [server_socket, input_socket, input_stream, goodconnection]...
     = bci_connection(port, timeout)
-
-    % Use java server sockets
-    import java.net.ServerSocket
-    import java.io.*
     
     server_socket  = [];
     input_socket  = [];
@@ -36,7 +32,7 @@ function [server_socket, input_socket, input_stream, goodconnection]...
         % Set up connection port
         fprintf(1, ['Waiting for BCI2000 - connect to %s' ...
         ':%d (timeout in %gs)\n'], IPaddress, port, timeout/1000);
-        server_socket = ServerSocket(port);
+        server_socket = java.net.ServerSocket(port);
         server_socket.setSoTimeout(timeout);
         
         % If connected
