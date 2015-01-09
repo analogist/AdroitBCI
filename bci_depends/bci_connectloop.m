@@ -27,4 +27,3 @@ function [ terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bci
     clear tryconnect;
 
 end
-

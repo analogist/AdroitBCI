@@ -42,4 +42,3 @@ mj forward;
 mjcPlot(so, J0, V0);
 
 end
-

@@ -19,4 +19,3 @@ originpos = csvread('bci_depends/Toronto_originpos.csv');
 protosynergies = csvread('bci_depends/Toronto_synergies.csv');
 
 end
-

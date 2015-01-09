@@ -9,4 +9,3 @@ function [] = bci_cleanup( serverbcisocket, bcisocket)
         bcisocket.close;
     end
 end
-
