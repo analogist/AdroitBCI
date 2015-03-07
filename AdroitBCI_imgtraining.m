@@ -8,7 +8,7 @@ rootpath = pwd();
     = setup_adroit(adroitpath, originpos);
 
 openseq = [linspace(0, 1.5, 50) linspace(1.5, 0, 50)];
-closeseq = [linspace(0, -1.5, 50); linspace(-1.5, 0, 50)];
+closeseq = [linspace(0, -1.5, 50) linspace(-1.5, 0, 50)];
 
 filename = 'buffer://localhost:1972';
 
@@ -48,7 +48,7 @@ while true
     if(~isempty(newstim))
         if(newstim > 0 && ~intrial)
             intrial = 1;
-            poses = zeros(size(protosynergies, 2), size(populatewith, 2));
+            poses = zeros(size(protosynergies, 2), 100);
             switch(mod(newstim,5))
                 case 1
                     poses(1, :) = openseq;
@@ -72,9 +72,5 @@ while true
         elseif(newstim == 0 && intrial)
             intrial = 0;
         end
-    end
-    
-%     if(eventcode(1, 3).value) == 1
-%         while(eventcode(1, 3).value > 0)
-           
-end % while true
+    end     
+end
