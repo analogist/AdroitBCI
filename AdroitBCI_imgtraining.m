@@ -48,40 +48,26 @@ while true
     if(~isempty(newstim))
         if(newstim > 0 && ~intrial)
             intrial = 1;
+            poses = zeros(size(protosynergies, 2), size(populatewith, 2));
             switch(mod(newstim,5))
                 case 1
-                    poses = zeros(size(protosynergies, 2), size(populatewith, 2));
-                    poses(1, :) = populatewith;
+                    poses(1, :) = openseq;
                     poses = poses';
-
-                    for i=1:size(poses, 1)
-                        newposition = protosynergies*poses(i, :)';
-                        newposition = newposition + originpos;
-                        mjcPlot(so, newposition);
-                        pause(0.04);
-                    end
                 case 2
-                    poses = zeros(size(protosynergies, 2), size(populatewith, 2));
-                    poses(2, :) = populatewith;
+                    poses(1, :) = closeseq;
                     poses = poses';
-
-                    for i=1:size(poses, 1)
-                        newposition = protosynergies*poses(i, :)';
-                        newposition = newposition + originpos;
-                        mjcPlot(so, newposition);
-                        pause(0.04);
-                    end
                 case 3
-                    poses = zeros(size(protosynergies, 2), size(populatewith, 2));
-                    poses = [populatewith; populatewith];
+                    poses(2, :) = openseq;
                     poses = poses';
-
-                    for i=1:size(poses, 1)
-                        newposition = protosynergies*poses(i, :)';
-                        newposition = newposition + originpos;
-                        mjcPlot(so, newposition);
-                        pause(0.04);
-                    end
+                case 4
+                    poses(2, :) = closeseq;
+                    poses = poses';
+            end
+            for i=1:size(poses, 1)
+                newposition = protosynergies*poses(i, :)';
+                newposition = newposition + originpos;
+                mjcPlot(so, newposition);
+                pause(0.04);
             end
         elseif(newstim == 0 && intrial)
             intrial = 0;
