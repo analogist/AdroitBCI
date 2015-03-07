@@ -14,15 +14,6 @@ rootpath = pwd();
 %% Big Loop
 terminate = false;
 while(~terminate)
-    [terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bcistream_reader]...
-        = bci_connectloop(port, timeout);
-    
-    while(goodconnection)
-        [goodconnection, bciJSON] = bci_read(bcistream_reader, bcistream, read_timeout);
-        disp(bciJSON); %TEST
-    end
-    
-    bci_cleanup(serverbcisocket, bcisocket);
+
 end
-bci_cleanup(serverbcisocket, bcisocket);
 mjcClose(so);
