@@ -2,10 +2,13 @@
 % variables
 clear all
 rootpath = pwd();
-[adroitpath, port, timeout, read_timeout, synergydims, originpos, protosynergies]...
+[adroitpath, fieldtrippath, timeout, read_timeout, synergydims, originpos, protosynergies]...
     = setup_bci(rootpath);
 [model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
     = setup_adroit(adroitpath, originpos);
+
+openseq = [linspace(0, 1.5, 50) linspace(1.5, 0, 50)];
+closeseq = [linspace(0, -1.5, 50); linspace(-1.5, 0, 50)];
 
 filename = 'buffer://localhost:1972';
 
@@ -28,22 +31,61 @@ while true
     currentsize = size({eventcode.value}, 2);
 	if(currentsize > eventsize) %% this needs to be a function
         disp('new events!')
-        disp([eventcode.type])
+        disp({eventcode((eventsize+1):currentsize).type})
         newstim = [eventcode(eventsize+find(strcmp('StimulusCode', {eventcode((eventsize+1):currentsize).type}))).value];
+        stoprunning = [eventcode(eventsize+find(strcmp('Running', {eventcode((eventsize+1):currentsize).type}))).value];
         disp(newstim);
         eventsize = currentsize;
     end
     
-    if(newstim > 0 && ~intrial)
-        intrial = 1;
-        switch(mod(newstim,4))
-            case 1
-                
-            case 2
-            case 3
+    if(~isempty(stoprunning))
+        if(stoprunning == 0)
+            mjcClose(so);
+            return
         end
-    elseif(newstim == 0 && intrial)
-        intrial = 0;
+    end
+    
+    if(~isempty(newstim))
+        if(newstim > 0 && ~intrial)
+            intrial = 1;
+            switch(mod(newstim,5))
+                case 1
+                    poses = zeros(size(protosynergies, 2), size(populatewith, 2));
+                    poses(1, :) = populatewith;
+                    poses = poses';
+
+                    for i=1:size(poses, 1)
+                        newposition = protosynergies*poses(i, :)';
+                        newposition = newposition + originpos;
+                        mjcPlot(so, newposition);
+                        pause(0.04);
+                    end
+                case 2
+                    poses = zeros(size(protosynergies, 2), size(populatewith, 2));
+                    poses(2, :) = populatewith;
+                    poses = poses';
+
+                    for i=1:size(poses, 1)
+                        newposition = protosynergies*poses(i, :)';
+                        newposition = newposition + originpos;
+                        mjcPlot(so, newposition);
+                        pause(0.04);
+                    end
+                case 3
+                    poses = zeros(size(protosynergies, 2), size(populatewith, 2));
+                    poses = [populatewith; populatewith];
+                    poses = poses';
+
+                    for i=1:size(poses, 1)
+                        newposition = protosynergies*poses(i, :)';
+                        newposition = newposition + originpos;
+                        mjcPlot(so, newposition);
+                        pause(0.04);
+                    end
+            end
+        elseif(newstim == 0 && intrial)
+            intrial = 0;
+        end
     end
     
 %     if(eventcode(1, 3).value) == 1
