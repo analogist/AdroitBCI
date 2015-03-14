@@ -1,4 +1,4 @@
-function [ terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bcistream_reader ] = bci_connectloop( port, timeout )
+function [ headerobj ] = bci_connectloop( )
 %BCI_CONNECTLOOP Wraps around bci_connection to keep making connections
 %   Uses timeout times and makes bci_connection is repeatedly attempted
     import java.net.ServerSocket
@@ -8,8 +8,7 @@ function [ terminate, goodconnection, serverbcisocket, bcisocket, bcistream, bci
     
     tryconnect = stoploop('Press ok to abort attempting connections');
     while(~tryconnect.Stop() && ~goodconnection)
-            [serverbcisocket, bcisocket, bcistream, goodconnection]...
-                = bci_connection(port, timeout);
+        hdr = ft_read_header(filename);
     end
     
     % Network loop good, passing on...
