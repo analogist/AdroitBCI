@@ -29,6 +29,13 @@ hstate = [];
 hgstate = [];
 bstate = [];
 
+event.type = 'Signal';
+event.sample = 1;
+event.offset = 0;
+event.duration = 1;
+
+coords = [0; 0];
+
 %% Big Loop
 terminate = false;
 while(~terminate)
@@ -68,15 +75,28 @@ while(~terminate)
 %         signal = [hg beta];
         signal = hg;
         gonogo = predict(movementpredictor, signal);
-        fprintf('%d       ', gonogo);
+%         fprintf('%d       ', gonogo);
 %         if(gonogo > 0)
             direction = predict(directionpredictor, signal);
             fprintf('%d', direction);
+            coords(1) = coords(1) + 0.25*direction;
+            if(coords(1) > 1.5)
+                coords(1) = 1.5;
+            elseif(coords(1) < -1.5)
+                coords(1) = -1.5;
+            end
 %         end
         fprintf('\n');
-
+            
+        newposition = protosynergies*coords;
+        newposition = newposition + originpos;
+        mjcPlot(so, newposition);
+        
+        event_coord = event;
+        event_coord.value = coords(1);
+        ft_write_event(filename, event_coord);
     end
 %     moveclass = predict(predictor, validationHG);
-    
+
 end
 mjcClose(so);
