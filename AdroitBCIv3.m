@@ -16,12 +16,7 @@ rootpath = pwd();
 [bb, ba] = butter(4, [10 30]/(1220/2));
 
 filename = 'buffer://localhost:1972';
-hdr = ft_read_header(filename);
-blocksize  = 240;
-chanindx   = 1:hdr.nChans;
-prevSample = 0;
-coords = [0 0];
-counter = uint32(1);
+
 load('movementpredictor');
 load('directionpredictor');
 hstate = [];
@@ -33,12 +28,19 @@ event.offset = 0;
 event.duration = 1;
 eventCoord = event;
 
+disp('Keypress to start')
+pause();
+
 coords = [0; 0];
+hdr = ft_read_header(filename);
+blocksize  = 240;
+chanindx   = 1:hdr.nChans;
+prevSample = 0;
+coords = [0 0];
+counter = uint32(1);
 
 %% Big Loop
 terminate = false;
-disp('Keypress to start')
-pause();
 while(~terminate)
     hdr = ft_read_header(filename);
 
