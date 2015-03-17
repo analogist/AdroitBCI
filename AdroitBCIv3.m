@@ -16,25 +16,28 @@ rootpath = pwd();
 [bb, ba] = butter(4, [10 30]/(1220/2));
 
 filename = 'buffer://localhost:1972';
+
+load('movementpredictor');
+load('directionpredictor');
+hstate = [];
+hgstate = [];
+bstate = [];
+
+event.type = 'coord';
+event.offset = 0;
+event.duration = 1;
+eventCoord = event;
+
+disp('Keypress to start')
+pause();
+
+coords = [0; 0];
 hdr = ft_read_header(filename);
 blocksize  = 240;
 chanindx   = 1:hdr.nChans;
 prevSample = 0;
 coords = [0 0];
 counter = uint32(1);
-load('movementpredictor');
-load('directionpredictor');
-
-hstate = [];
-hgstate = [];
-bstate = [];
-
-event.type = 'Signal';
-event.sample = 1;
-event.offset = 0;
-event.duration = 1;
-
-coords = [0; 0];
 
 %% Big Loop
 terminate = false;
@@ -79,6 +82,7 @@ while(~terminate)
 %         if(gonogo > 0)
             direction = predict(directionpredictor, signal);
             fprintf('%d', direction);
+            direction = double(direction);
             coords(1) = coords(1) + 0.25*direction;
             if(coords(1) > 1.5)
                 coords(1) = 1.5;
@@ -91,10 +95,11 @@ while(~terminate)
         newposition = protosynergies*coords;
         newposition = newposition + originpos;
         mjcPlot(so, newposition);
-        
-        event_coord = event;
-        event_coord.value = coords(1);
-        ft_write_event(filename, event_coord);
+%         disp(newposition)
+        eventCoord = event;
+        eventCoord.sample = hdr.nSamples*hdr.nTrials;
+        eventCoord.value = uint16(round(coords(1)*100));
+        ft_write_event(filename, eventCoord);
     end
 %     moveclass = predict(predictor, validationHG);
 
