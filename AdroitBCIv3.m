@@ -17,7 +17,7 @@ rootpath = pwd();
 
 filename = 'buffer://localhost:1972';
 
-load('movementpredictor');
+% load('movementpredictor');
 load('directionpredictor');
 hstate = [];
 hgstate = [];
@@ -36,7 +36,6 @@ hdr = ft_read_header(filename);
 blocksize  = 240;
 chanindx   = 1:hdr.nChans;
 prevSample = 0;
-coords = [0 0];
 counter = uint32(1);
 
 %% Big Loop
@@ -77,7 +76,7 @@ while(~terminate)
 %         
 %         signal = [hg beta];
         signal = hg;
-        gonogo = predict(movementpredictor, signal);
+%         gonogo = predict(movementpredictor, signal);
 %         fprintf('%d       ', gonogo);
 %         if(gonogo > 0)
             direction = predict(directionpredictor, signal);
