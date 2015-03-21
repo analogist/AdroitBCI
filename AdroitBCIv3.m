@@ -66,9 +66,9 @@ while(~terminate)
         fprintf('reading from buffer %d to %d\n', begsample, endsample);
         % read data segment from buffer
         dat = ft_read_data(filename, 'header', hdr, 'begsample', begsample, 'endsample', endsample, 'chanindx', chanindx)';
-        [dat, hstate] = filter(hb, ha, dat, hstate);
+        [dat] = filter(hb, ha, dat);
         dat = dat - repmat(mean(dat, 2), [1 hdr.nChans]);
-        [hg, hgstate] = filter(hgb, hga, dat, hgstate);
+        [hg] = filter(hgb, hga, dat);
 %         [beta, bstate] = filter(bb, ba, dat, bstate);
         
         hg = mean(log(abs(hilbert(hg)).^2), 1);
