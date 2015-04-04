@@ -12,15 +12,18 @@ rootpath = pwd();
     = setup_adroit(adroitpath, originpos);
 
 [hb, ha] = butter(4, 5/(1220/2), 'high');
-[hgb, hga] = butter(4, [70 100]/(1220/2));
+[hgb, hga] = butter(4, [70 90]/(1220/2));
+[hgb2, hga2] = butter(4, [90 110]/(1220/2));
 [bb, ba] = butter(4, [10 30]/(1220/2));
 
 filename = 'buffer://localhost:1972';
 
 % load('movementpredictor');
 load('directionpredictor');
+relevantchans = [46:48 54:56 62:64];
 hstate = [];
 hgstate = [];
+hg2state = [];
 bstate = [];
 
 event.type = 'coord';
@@ -34,7 +37,7 @@ pause();
 coords = [0; 0];
 hdr = ft_read_header(filename);
 blocksize  = 240;
-chanindx   = 1:hdr.nChans;
+chanindx   = relevantchans;
 prevSample = 0;
 counter = uint32(1);
 
@@ -67,15 +70,17 @@ while(~terminate)
         % read data segment from buffer
         dat = ft_read_data(filename, 'header', hdr, 'begsample', begsample, 'endsample', endsample, 'chanindx', chanindx)';
         [dat, hstate] = filter(hb, ha, dat, hstate);
-        dat = dat - repmat(mean(dat, 2), [1 hdr.nChans]);
+        dat = dat - repmat(mean(dat, 2), [1 length(relevantchans)]);
         [hg, hgstate] = filter(hgb, hga, dat, hgstate);
+        [hg2, hg2state] = filter(hgb2, hga2, dat, hg2state);
 %         [beta, bstate] = filter(bb, ba, dat, bstate);
         
         hg = mean(log(abs(hilbert(hg)).^2), 1);
+        hg2 = mean(log(abs(hilbert(hg2)).^2), 1);
 % %         beta = mean(log(abs(hilbert(beta)).^2), 1);
 %         
 %         signal = [hg beta];
-        signal = hg;
+        signal = [hg hg2];
 %         gonogo = predict(movementpredictor, signal);
 %         fprintf('%d       ', gonogo);
 %         if(gonogo > 0)
