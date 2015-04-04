@@ -75,8 +75,12 @@ while(~terminate)
         [hg2, hg2state] = filter(hgb2, hga2, dat, hg2state);
 %         [beta, bstate] = filter(bb, ba, dat, bstate);
         
-        hg = mean(log(abs(hilbert(hg)).^2), 1);
-        hg2 = mean(log(abs(hilbert(hg2)).^2), 1);
+%         hg = mean(log(abs(hilbert(hg)).^2), 1);
+%         hg2 = mean(log(abs(hilbert(hg2)).^2), 1);
+%         
+        hg = zscore(log(mean(abs(hilbert(hg).^2), 1)));
+        hg2 = zscore(log(mean(abs(hilbert(hg2).^2), 1)));
+
 % %         beta = mean(log(abs(hilbert(beta)).^2), 1);
 %         
 %         signal = [hg beta];
