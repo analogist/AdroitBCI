@@ -71,8 +71,8 @@ while(~terminate)
         dat = ft_read_data(filename, 'header', hdr, 'begsample', begsample, 'endsample', endsample, 'chanindx', chanindx)';
         [dat, hstate] = filter(hb, ha, dat, hstate);
         dat = dat - repmat(mean(dat, 2), [1 length(relevantchans)]);
-        [hg, hgstate] = filter(hgb, hga, dat, hgstate);
-        [hg2, hg2state] = filter(hgb2, hga2, dat, hg2state);
+        [hg] = filter(hgb, hga, dat);
+        [hg2] = filter(hgb2, hga2, dat);
 %         [beta, bstate] = filter(bb, ba, dat, bstate);
         
 %         hg = mean(log(abs(hilbert(hg)).^2), 1);
