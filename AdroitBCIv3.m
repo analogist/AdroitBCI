@@ -21,6 +21,7 @@ filename = 'buffer://localhost:1972';
 % load('movementpredictor');
 load('directionpredictor');
 relevantchans = [46:48 54:56 62:64];
+%relevantchans = [46:47 54:55];
 hstate = [];
 hgstate = [];
 hg2state = [];
@@ -97,6 +98,7 @@ while(~terminate)
             fprintf('%d', direction);
             if(direction == 0)
                 coords = coords*[.9 .9];
+                % coords = coords - (coords - [-1.3 -1.3]).*[.15 .15];
             elseif(direction == 1)
                 coords(1) = coords(1) + 0.25;
             elseif(direction == 2)
