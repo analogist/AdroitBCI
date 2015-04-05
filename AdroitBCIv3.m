@@ -31,6 +31,11 @@ event.offset = 0;
 event.duration = 1;
 eventCoord = event;
 
+event.type = 'coord2';
+event.offset = 0;
+event.duration = 1;
+eventCoord2 = event;
+
 disp('Keypress to start')
 pause();
 
@@ -90,13 +95,26 @@ while(~terminate)
 %         if(gonogo > 0)
             direction = predict(directionpredictor, signal);
             fprintf('%d', direction);
-            direction = double(direction);
-            coords(1) = coords(1) + 0.25*direction;
+            if(direction == 0)
+                coords = coords - [0.035; 0.05];
+            elseif(direction == 1)
+                coords(1) = coords(1) + 0.25;
+            elseif(direction == 2)
+                coords(2) = coords(2) + 0.25;
+            end          
+            
             if(coords(1) > 1.5)
                 coords(1) = 1.5;
             elseif(coords(1) < -1.5)
                 coords(1) = -1.5;
             end
+            if(coords(2) > 1.5)
+                coords(2) = 1.5;
+            elseif(coords(2) < -1.5)
+                coords(2) = -1.5;
+            end
+            
+            disp(coords);
 %         end
         fprintf('\n');
             
@@ -104,10 +122,12 @@ while(~terminate)
         newposition = newposition + originpos;
         mjcPlot(so, newposition);
 %         disp(newposition)
-        eventCoord = event;
         eventCoord.sample = hdr.nSamples*hdr.nTrials;
         eventCoord.value = uint16(round(coords(1)*100));
+        eventCoord2.sample = hdr.nSamples*hdr.nTrials;
+        eventCoord2.value = uint16(round(coords(2)*100));
         ft_write_event(filename, eventCoord);
+        ft_write_event(filename, eventCoord2);
     end
 %     moveclass = predict(predictor, validationHG);
 
