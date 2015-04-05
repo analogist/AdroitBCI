@@ -78,25 +78,25 @@ while(~terminate)
         dat = dat - repmat(mean(dat, 2), [1 length(relevantchans)]);
         [hg] = filter(hgb, hga, dat);
         [hg2] = filter(hgb2, hga2, dat);
-%         [beta, bstate] = filter(bb, ba, dat, bstate);
+        [beta] = filter(bb, ba, dat);
         
 %         hg = mean(log(abs(hilbert(hg)).^2), 1);
 %         hg2 = mean(log(abs(hilbert(hg2)).^2), 1);
-%         
-        hg = zscore(log(mean(abs(hilbert(hg).^2), 1)));
-        hg2 = zscore(log(mean(abs(hilbert(hg2).^2), 1)));
-
-% %         beta = mean(log(abs(hilbert(beta)).^2), 1);
+        hgmax = log(max(abs(hilbert(hg).^2)));
+        hg2max = log(max(abs(hilbert(hg2).^2)));
+        hg = log(mean(abs(hilbert(hg).^2), 1));
+        hg2 = log(mean(abs(hilbert(hg2).^2), 1));
+        beta = log(mean(abs(hilbert(beta).^2), 1));
 %         
 %         signal = [hg beta];
-        signal = [hg hg2];
+        signal = [hg hg2 hgmax hg2max beta];
 %         gonogo = predict(movementpredictor, signal);
 %         fprintf('%d       ', gonogo);
 %         if(gonogo > 0)
             direction = predict(directionpredictor, signal);
             fprintf('%d', direction);
             if(direction == 0)
-                coords = coords - [0.035; 0.05];
+                coords = coords*[.9 .9];
             elseif(direction == 1)
                 coords(1) = coords(1) + 0.25;
             elseif(direction == 2)
@@ -105,13 +105,13 @@ while(~terminate)
             
             if(coords(1) > 1.5)
                 coords(1) = 1.5;
-            elseif(coords(1) < -1.5)
-                coords(1) = -1.5;
+            elseif(coords(1) < 0)
+                coords(1) = 0;
             end
             if(coords(2) > 1.5)
                 coords(2) = 1.5;
-            elseif(coords(2) < -1.5)
-                coords(2) = -1.5;
+            elseif(coords(2) < 0)
+                coords(2) = 0;
             end
             
             disp(coords);
