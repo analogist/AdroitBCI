@@ -123,9 +123,9 @@ while(~terminate)
         mjcPlot(so, newposition);
 %         disp(newposition)
         eventCoord.sample = hdr.nSamples*hdr.nTrials;
-        eventCoord.value = uint16(round(coords(1)*100));
+        eventCoord.value = uint16(round(coords(1)*100)+1000);
         eventCoord2.sample = hdr.nSamples*hdr.nTrials;
-        eventCoord2.value = uint16(round(coords(2)*100));
+        eventCoord2.value = uint16(round(coords(2)*100)+1000);
         ft_write_event(filename, eventCoord);
         ft_write_event(filename, eventCoord2);
     end
