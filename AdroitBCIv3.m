@@ -14,6 +14,8 @@ rootpath = pwd();
 [hb, ha] = butter(4, 5/(1220/2), 'high');
 [hgb, hga] = butter(4, [70 90]/(1220/2));
 [hgb2, hga2] = butter(4, [90 110]/(1220/2));
+% [hgb3, hga3] = butter(4, [110 130]/(1220/2));
+% [hgb4, hga4] = butter(4, [130 150]/(1220/2));
 [bb, ba] = butter(4, [10 30]/(1220/2));
 
 filename = 'buffer://localhost:1972';
@@ -79,6 +81,8 @@ while(~terminate)
         dat = dat - repmat(mean(dat, 2), [1 length(relevantchans)]);
         [hg] = filter(hgb, hga, dat);
         [hg2] = filter(hgb2, hga2, dat);
+%         [hg3] = filter(hgb3, hga3, dat);
+%         [hg4] = filter(hgb4, hga4, dat);
         [beta] = filter(bb, ba, dat);
         
 %         hg = mean(log(abs(hilbert(hg)).^2), 1);
@@ -87,9 +91,11 @@ while(~terminate)
         hg2max = log(max(abs(hilbert(hg2).^2)));
         hg = log(mean(abs(hilbert(hg).^2), 1));
         hg2 = log(mean(abs(hilbert(hg2).^2), 1));
+%         hg3 = log(mean(abs(hilbert(hg3).^2), 1));
+%         hg4 = log(mean(abs(hilbert(hg4).^2), 1));
         beta = log(mean(abs(hilbert(beta).^2), 1));
 %         
-%         signal = [hg beta];
+%         signal = [hg hg2 hg3 hg4 hgmax hg2max beta];
         signal = [hg hg2 hgmax hg2max beta];
 %         gonogo = predict(movementpredictor, signal);
 %         fprintf('%d       ', gonogo);
