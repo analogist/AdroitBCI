@@ -14,20 +14,20 @@ rootpath = pwd();
 [hb, ha] = butter(4, 5/(1220/2), 'high');
 [hgb, hga] = butter(4, [70 90]/(1220/2));
 [hgb2, hga2] = butter(4, [90 110]/(1220/2));
-% [hgb3, hga3] = butter(4, [110 130]/(1220/2));
-% [hgb4, hga4] = butter(4, [130 150]/(1220/2));
+[hgb3, hga3] = butter(4, [110 130]/(1220/2));
+[hgb4, hga4] = butter(4, [130 150]/(1220/2));
 [bb, ba] = butter(4, [10 30]/(1220/2));
 
 filename = 'buffer://localhost:1972';
 
 % load('movementpredictor');
 load('directionpredictor');
-relevantchans = [46:48 54:56 62:64];
-%relevantchans = [46:47 54:55];
+% relevantchans = [46:48 54:56 62:64];
+relevantchans = [46:47 54:55];
 hstate = [];
-hgstate = [];
-hg2state = [];
-bstate = [];
+% hgstate = [];
+% hg2state = [];
+% bstate = [];
 
 event.type = 'coord';
 event.offset = 0;
@@ -49,6 +49,8 @@ chanindx   = relevantchans;
 prevSample = 0;
 counter = uint32(1);
 
+circbuff = nan(5*10, length(relevantchans)*7);
+
 %% Big Loop
 terminate = false;
 while(~terminate)
@@ -66,9 +68,6 @@ while(~terminate)
         prevSample  = endsample;
         fprintf('%d ', counter);
         counter = counter+1;
-        if(mod(counter, 15) == 0)
-            fprintf('\n');
-        end
 
         if newsamples >= blocksize*3
             warning('Behind!')
@@ -77,33 +76,32 @@ while(~terminate)
         fprintf('reading from buffer %d to %d\n', begsample, endsample);
         % read data segment from buffer
         dat = ft_read_data(filename, 'header', hdr, 'begsample', begsample, 'endsample', endsample, 'chanindx', chanindx)';
+        dat = double(dat);
         [dat, hstate] = filter(hb, ha, dat, hstate);
         dat = dat - repmat(mean(dat, 2), [1 length(relevantchans)]);
         [hg] = filter(hgb, hga, dat);
         [hg2] = filter(hgb2, hga2, dat);
-%         [hg3] = filter(hgb3, hga3, dat);
-%         [hg4] = filter(hgb4, hga4, dat);
+        [hg3] = filter(hgb3, hga3, dat);
+        [hg4] = filter(hgb4, hga4, dat);
         [beta] = filter(bb, ba, dat);
         
-%         hg = mean(log(abs(hilbert(hg)).^2), 1);
-%         hg2 = mean(log(abs(hilbert(hg2)).^2), 1);
-        hgmax = log(max(abs(hilbert(hg).^2)));
-        hg2max = log(max(abs(hilbert(hg2).^2)));
+        hgmax = log(max(abs(hilbert(hg)).^2));
+        hg2max = log(max(abs(hilbert(hg2)).^2));
         hg = log(mean(abs(hilbert(hg).^2), 1));
-        hg2 = log(mean(abs(hilbert(hg2).^2), 1));
-%         hg3 = log(mean(abs(hilbert(hg3).^2), 1));
-%         hg4 = log(mean(abs(hilbert(hg4).^2), 1));
+        hg2 = log(mean(abs(hilbert(hg2)).^2, 1));
+        hg3 = log(mean(abs(hilbert(hg3)).^2, 1));
+        hg4 = log(mean(abs(hilbert(hg4)).^2, 1));
         beta = log(mean(abs(hilbert(beta).^2), 1));
-%         
-%         signal = [hg hg2 hg3 hg4 hgmax hg2max beta];
-        signal = [hg hg2 hgmax hg2max beta];
-%         gonogo = predict(movementpredictor, signal);
-%         fprintf('%d       ', gonogo);
-%         if(gonogo > 0)
-            direction = predict(directionpredictor, signal);
+
+        signal = [hg hg2 hg3 hg4 hgmax hg2max beta];
+        circbuff = [signal; circbuff(1:end-1, :)];
+        zcircbuff = zscore(circbuff(~any(isnan(circbuff), 2), :), [], 1);
+        outputs = zcircbuff(1, :);
+        
+            direction = predict(directionpredictor, outputs);
             fprintf('%d', direction);
             if(direction == 0)
-                coords = coords*[.9 .9];
+                coords = coords.*[.9; .9];
                 % coords = coords - (coords - [-1.3 -1.3]).*[.15 .15];
             elseif(direction == 1)
                 coords(1) = coords(1) + 0.25;
