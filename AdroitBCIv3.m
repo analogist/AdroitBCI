@@ -14,6 +14,8 @@ if(~exist('so'))
         = setup_adroit(adroitpath, originpos);
 else
     mjcClose(so);
+    [model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
+        = setup_adroit(adroitpath, originpos);
 end
 
 [hb, ha] = butter(4, 5/(1220/2), 'high');
@@ -49,12 +51,12 @@ pause();
 
 coords = [0; 0];
 hdr = ft_read_header(filename);
-blocksize  = 240;
+blocksize  = 120;
 chanindx   = relevantchans;
 prevSample = 0;
 counter = uint32(1);
 
-circbuff = nan(5*10, length(relevantchans)*7);
+circbuff = nan(15*10, length(relevantchans)*7);
 
 %% Big Loop
 terminate = false;
@@ -106,23 +108,23 @@ while(~terminate)
             direction = predict(directionpredictor, outputs);
             fprintf('%d', direction);
             if(direction == 0)
-                coords = coords.*[.9; .9];
-                % coords = coords - (coords - [-1.3 -1.3]).*[.15 .15];
+%                 coords = coords.*[.90; .90];
+                coords = coords - (coords - [-1.3; -1.3]).*[.04; .04];
             elseif(direction == 1)
-                coords(1) = coords(1) + 0.25;
+                coords(1) = coords(1) + 0.1;
             elseif(direction == 2)
-                coords(2) = coords(2) + 0.25;
+                coords(2) = coords(2) + 0.1;
             end          
             
             if(coords(1) > 1.5)
                 coords(1) = 1.5;
-            elseif(coords(1) < 0)
-                coords(1) = 0;
+            elseif(coords(1) < -1.3)
+                coords(1) = -1.3;
             end
             if(coords(2) > 1.5)
                 coords(2) = 1.5;
-            elseif(coords(2) < 0)
-                coords(2) = 0;
+            elseif(coords(2) < -1.3)
+                coords(2) = -1.3;
             end
             
             disp(coords);
