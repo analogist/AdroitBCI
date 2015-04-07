@@ -5,11 +5,16 @@
 %% Init
 % variables
 % clear all
-rootpath = pwd();
-[adroitpath, port, timeout, read_timeout, synergydims, originpos, protosynergies]...
-    = setup_bci(rootpath);
-[model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
-    = setup_adroit(adroitpath, originpos);
+
+if(~exist('so'))
+    rootpath = pwd();
+    [adroitpath, port, timeout, read_timeout, synergydims, originpos, protosynergies]...
+        = setup_bci(rootpath);
+    [model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
+        = setup_adroit(adroitpath, originpos);
+else
+    mjcClose(so);
+end
 
 [hb, ha] = butter(4, 5/(1220/2), 'high');
 [hgb, hga] = butter(4, [70 90]/(1220/2));
