@@ -30,7 +30,8 @@ filename = 'buffer://localhost:1972';
 % load('movementpredictor');
 load('directionpredictor');
 % relevantchans = [46:48 54:56 62:64];
-relevantchans = [46:47 54:55];
+% relevantchans = [46:47 54:55];
+relevantchans = 1:64
 hstate = [];
 % hgstate = [];
 % hg2state = [];
@@ -51,7 +52,7 @@ pause();
 
 coords = [0; 0];
 hdr = ft_read_header(filename);
-blocksize  = 120;
+blocksize  = 240;
 chanindx   = relevantchans;
 prevSample = 0;
 counter = uint32(1);
