@@ -1,11 +1,16 @@
 %% Init
 % variables
-clear all
-rootpath = pwd();
-[adroitpath, fieldtrippath, timeout, read_timeout, synergydims, originpos, protosynergies]...
-    = setup_bci(rootpath);
-[model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
-    = setup_adroit(adroitpath, originpos);
+if(~exist('so'))
+    rootpath = pwd();
+    [adroitpath, port, timeout, read_timeout, synergydims, originpos, protosynergies]...
+        = setup_bci(rootpath);
+    [model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
+        = setup_adroit(adroitpath, originpos);
+else
+    mjcClose(so);
+    [model, act, gain_A, gain_W, gain_F, vizIP, vizDir, so, m, gainP, gainD]...
+        = setup_adroit(adroitpath, originpos);
+end
 
 openseq = [linspace(0, 1.5, 50) linspace(1.5, 0, 50)];
 closeseq = [linspace(0, -1.5, 50) linspace(-1.5, 0, 50)];
@@ -19,7 +24,6 @@ blocksize  = 0.100*hdr.Fs;
 chanindx   = 1:hdr.nChans;
 eventsize = 0;
 intrial = logical(0);
-
 while true
   % determine number of samples available in buffer
 %   hdr = ft_read_header(filename);
